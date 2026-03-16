@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── BASE ─────────────────────────────────────────────────── */
+body {
+  background-color: #F7F4EF;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── VUE TRANSITIONS ──────────────────────────────────────── */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* ── PRODUCT CARD ─────────────────────────────────────────── */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+.product-card:hover .product-img {
+  transform: scale(1.04);
+}
+.product-img {
+  transition: transform 0.5s ease;
+}
+
+/* ── ADD-TO-CART BUTTON ───────────────────────────────────── */
+.btn-cart {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.btn-cart:hover {
+  background: #1C1C1C;
+  color: #F7F4EF;
+  border-color: #1C1C1C;
+}
+
+/* ── CART BADGE POP ───────────────────────────────────────── */
+.cart-badge {
+  animation: pop 0.25s ease;
+}
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.45); }
+  100% { transform: scale(1); }
+}
+
+/* ── PRICE RANGE SLIDER ───────────────────────────────────── */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  background: #E2DDD6;
+  outline: none;
+  width: 100%;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #1C1C1C;
+  cursor: pointer;
+}
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: #1C1C1C;
+  cursor: pointer;
+}
+
+/* ── FILTER CHIPS ─────────────────────────────────────────── */
+.filter-chip {
+  transition: background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+.filter-chip.active {
+  background: #1C1C1C;
+  color: #F7F4EF;
+}
+.filter-chip:not(.active):hover {
+  background: #E2DDD6;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 4px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: #C8A96E; border-radius: 2px; }
+
+/* ── SIDEBAR ──────────────────────────────────────────────── */
+.sidebar-scroll {
+  overflow-y: auto;
+  max-height: calc(100vh - 80px);
+}
+
+/* ── SLIDE-DOWN (modal / drawer) ──────────────────────────── */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.slide-down {
+  animation: slideDown 0.35s ease forwards;
+}
+
+/* ── LOGO DECORATIVE LINE ─────────────────────────────────── */
+.logo-line {
+  width: 30px;
+  height: 1px;
+  background: #C8A96E;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 10px;
+}
