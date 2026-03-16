@@ -15,6 +15,7 @@
       :cart="cart"
       :cart-count="cartCount"
       :cart-total="cartTotal"
+      :colors="COLORS"
       @close="cartOpen = false"
       @remove="removeFromCart"
     />
@@ -31,6 +32,9 @@
         v-model:selectedCategory="selectedCategory"
         v-model:maxPrice="maxPrice"
         v-model:sortBy="sortBy"
+        :sizes="SIZES"
+        v-model:selectedSize="selectedSize"
+        :available-sizes="availableSizes"
         :selected-colors="selectedColors"
         @toggle-color="toggleColor"
         @clear="clearFilters"
@@ -111,21 +115,32 @@
     <!-- Product modal -->
     <ProductModal
       :product="selectedProduct"
-      @close="selectedProduct = null"
+      :sizes="SIZES"
+      :colors="COLORS"
+      v-model:selectedSize="modalSelectedSize"
+      v-model:selectedColor="modalSelectedColor"
+      @close="closeModal"
       @add-to-cart="addToCart"
     />
+
+    <!-- Toast -->
+    <div v-if="toast" class="fixed top-6 right-6 z-50">
+      <div class="bg-charcoal text-cream px-4 py-3 rounded shadow-lg max-w-sm">
+        <div class="text-sm">{{ toast }}</div>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer class="border-t border-border mt-16 py-10">
       <div class="max-w-screen-xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs tracking-widest uppercase text-muted font-body">
-        <span class="font-display text-lg text-charcoal tracking-widest">Maison</span>
+        <span class="font-display text-lg text-charcoal tracking-widest">Clothing</span>
         <div class="flex gap-8">
           <a href="#" class="hover:text-charcoal transition-colors">About</a>
           <a href="#" class="hover:text-charcoal transition-colors">Shipping</a>
           <a href="#" class="hover:text-charcoal transition-colors">Returns</a>
           <a href="#" class="hover:text-charcoal transition-colors">Contact</a>
         </div>
-        <span>© 2025 Maison</span>
+        <span>© 2025 footer</span>
       </div>
     </footer>
   </div>
@@ -133,7 +148,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { CATEGORIES, COLORS, PRODUCTS } from './js/products.js'
+import { CATEGORIES, COLORS, PRODUCTS, SIZES } from './js/products.js'
 import AppHeader     from './components/Appheader.vue'
 import CartDrawer    from './components/CartDrawer.vue'
 import FilterSidebar from './components/FilterSidebar.vue'
@@ -145,6 +160,8 @@ const sidebarOpen    = ref(false)
 const cartOpen       = ref(false)
 const viewMode       = ref('grid')
 const selectedProduct = ref(null)
+const modalSelectedSize  = ref('')
+const modalSelectedColor = ref('')
 
 // ── Filter state ──────────────────────────────────────────
 const searchQuery      = ref('')
@@ -152,9 +169,11 @@ const selectedCategory = ref('All')
 const maxPrice         = ref(1000)
 const sortBy           = ref('featured')
 const selectedColors   = ref([])
+const selectedSize     = ref('')
 
 // ── Cart state ────────────────────────────────────────────
 const cart = ref([])
+const toast = ref(null)
 
 // ── Sort options ──────────────────────────────────────────
 const sortOptions = [
@@ -187,6 +206,10 @@ const filteredProducts = computed(() => {
     list = list.filter(p => selectedColors.value.includes(p.color))
   }
 
+  if (selectedSize.value) {
+    list = list.filter(p => Array.isArray(p.sizes) && p.sizes.includes(selectedSize.value))
+  }
+
   if (sortBy.value === 'price-asc')  list.sort((a, b) => a.price - b.price)
   if (sortBy.value === 'price-desc') list.sort((a, b) => b.price - a.price)
   if (sortBy.value === 'rating')     list.sort((a, b) => b.rating - a.rating)
@@ -195,19 +218,47 @@ const filteredProducts = computed(() => {
   return list
 })
 
+// available sizes for the currently filtered products (used to grey out sidebar)
+const availableSizes = computed(() => {
+  const set = new Set()
+  filteredProducts.value.forEach(p => {
+    if (Array.isArray(p.sizes)) p.sizes.forEach(s => set.add(s))
+  })
+  return Array.from(set)
+})
+
 // ── Cart computed ─────────────────────────────────────────
 const cartCount = computed(() => cart.value.length)
 const cartTotal = computed(() => cart.value.reduce((s, i) => s + i.price, 0))
 
 // ── Methods ───────────────────────────────────────────────
-function addToCart(product) {
-  if (!cart.value.find(i => i.id === product.id)) {
-    cart.value.push({ ...product })
+function addToCart(productOrPayload, maybePayload) {
+  // support two calling styles:
+  // - addToCart(product)           (from ProductCard)
+  // - addToCart({ product, options }) (from ProductModal)
+  let product = productOrPayload
+  let options = maybePayload
+  if (productOrPayload && productOrPayload.product) {
+    product = productOrPayload.product
+    options = productOrPayload.options || {}
   }
+  options = options || {}
+
+  // avoid duplicate entries with same options
+  const exists = cart.value.find(i => i.id === product.id && JSON.stringify(i.options || {}) === JSON.stringify(options))
+  if (exists) return
+
+  const item = { ...product, options }
+  cart.value.push(item)
+  // show toast with full description
+  const desc = `${product.name}${options.size ? ' • Size: '+options.size : ''}${options.color ? ' • Color: '+options.color : ''} — ${product.description}`
+  toast.value = desc
+  setTimeout(() => { toast.value = null }, 4500)
 }
 
-function removeFromCart(id) {
-  cart.value = cart.value.filter(i => i.id !== id)
+function removeFromCart(item) {
+  // remove matching product with same options
+  cart.value = cart.value.filter(i => !(i.id === item.id && JSON.stringify(i.options || {}) === JSON.stringify(item.options || {})))
 }
 
 function toggleColor(name) {
@@ -222,9 +273,19 @@ function clearFilters() {
   sortBy.value           = 'featured'
   selectedColors.value   = []
   searchQuery.value      = ''
+  selectedSize.value     = ''
 }
 
 function openProduct(product) {
   selectedProduct.value = product
+  // prefill modal selections with sensible defaults
+  modalSelectedSize.value = (product && Array.isArray(product.sizes) && product.sizes.length) ? product.sizes[0] : ''
+  modalSelectedColor.value = product ? (product.availableColors && product.availableColors.length ? product.availableColors[0] : (product.color || '')) : ''
+}
+
+function closeModal() {
+  selectedProduct.value = null
+  modalSelectedSize.value = ''
+  modalSelectedColor.value = ''
 }
 </script>

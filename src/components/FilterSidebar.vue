@@ -59,6 +59,24 @@
           :style="{ background: color.hex }"
         ></button>
       </div>
+
+        <!-- Sizes -->
+        <div class="mb-8">
+          <p class="text-[10px] tracking-[0.2em] uppercase text-muted mb-3">Size</p>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="size in sizes"
+              :key="size"
+              @click="onSelectSize(size)"
+              :disabled="availableSizes && !availableSizes.includes(size)"
+              :class="[
+                'px-3 py-1 rounded text-xs border transition-colors',
+                selectedSize === size ? 'bg-charcoal text-cream' : 'bg-white text-charcoal',
+                (availableSizes && !availableSizes.includes(size)) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-border'
+              ]"
+            >{{ size }}</button>
+          </div>
+        </div>
     </div>
 
     <button
@@ -79,12 +97,22 @@ defineProps({
   maxPrice:         { type: Number,  default: 1000 },
   sortBy:           { type: String,  default: 'featured' },
   selectedColors:   { type: Array,   default: () => [] },
+  sizes:            { type: Array,   default: () => ['XS','S','M','L','XL'] },
+  selectedSize:     { type: String,  default: '' },
+  availableSizes:   { type: Array,   default: () => [] },
 })
-defineEmits([
+const emit = defineEmits([
   'update:selectedCategory',
   'update:maxPrice',
   'update:sortBy',
   'toggle-color',
+  'update:selectedSize',
   'clear',
 ])
+
+function onSelectSize(size) {
+  if (Array.isArray(availableSizes) && availableSizes.length > 0 && !availableSizes.includes(size)) return
+  const next = selectedSize === size ? '' : size
+  emit('update:selectedSize', next)
+}
 </script>

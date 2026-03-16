@@ -4,9 +4,20 @@
 
 /* ── BASE ─────────────────────────────────────────────────── */
 body {
-  background-color: #F7F4EF;
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(200,169,110,0.06), transparent 10%),
+              radial-gradient(800px 400px at 90% 90%, rgba(28,28,28,0.02), transparent 12%),
+              #F7F4EF;
   font-family: 'DM Sans', sans-serif;
+  color-scheme: light;
 }
+
+/* subtle lift and CTA polish */
+.product-card { border-radius: 10px; }
+.btn-cart { box-shadow: 0 6px 18px rgba(28,28,28,0.06); }
+.btn-cart:hover { transform: translateY(-1px); }
+
+/* make modal stand out slightly more */
+.slide-down { box-shadow: 0 40px 80px rgba(17,17,17,0.08); }
 
 /* ── VUE TRANSITIONS ──────────────────────────────────────── */
 .fade-enter-active,

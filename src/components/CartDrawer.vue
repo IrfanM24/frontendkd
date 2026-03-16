@@ -30,7 +30,7 @@
             Your bag is empty
           </div>
 
-          <div v-for="item in cart" :key="item.id" class="flex gap-3 items-start">
+          <div v-for="item in cart" :key="item.id + JSON.stringify(item.options || {})" class="flex gap-3 items-start">
             <!-- Thumbnail -->
             <div class="w-16 h-20 rounded overflow-hidden flex-shrink-0" :style="{ background: item.bg }">
               <img v-if="item.image" :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
@@ -41,9 +41,16 @@
               <p class="font-body text-sm text-charcoal font-medium truncate">{{ item.name }}</p>
               <p class="font-body text-xs text-muted">{{ item.category }}</p>
               <p class="font-display text-base text-charcoal mt-1">€{{ item.price }}</p>
+              <div class="text-xs text-muted mt-1">
+                <span v-if="item.options && item.options.size">Size: {{ item.options.size }}</span>
+                <span v-if="item.options && item.options.color" class="ml-2 flex items-center gap-2">
+                  <span class="inline-block w-3 h-3 rounded-full" :style="{ background: getColorHex(item.options.color) }"></span>
+                  <span>{{ item.options.color }}</span>
+                </span>
+              </div>
             </div>
             <!-- Remove -->
-            <button @click="$emit('remove', item.id)" class="text-muted hover:text-charcoal flex-shrink-0 mt-0.5">
+            <button @click="$emit('remove', item)" class="text-muted hover:text-charcoal flex-shrink-0 mt-0.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
               </svg>
@@ -73,6 +80,13 @@ defineProps({
   cart:      { type: Array,   default: () => [] },
   cartCount: { type: Number,  default: 0 },
   cartTotal: { type: Number,  default: 0 },
+  colors:    { type: Array,   default: () => [] },
 })
 defineEmits(['close', 'remove'])
+
+function getColorHex(name) {
+  const list = colors || []
+  const found = list.find(x => x.name === name)
+  return found ? found.hex : '#fff'
+}
 </script>

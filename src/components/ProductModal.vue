@@ -45,6 +45,39 @@
           <p class="text-sm font-body text-muted leading-relaxed mb-6">{{ product.description }}</p>
 
           <div class="mt-auto">
+            <!-- Sizes -->
+            <div class="mb-4">
+              <p class="text-[10px] tracking-[0.2em] uppercase text-muted mb-2">Size</p>
+              <div class="flex gap-2 flex-wrap">
+                <button
+                  v-for="s in sizes"
+                  :key="s"
+                  @click="selectSize(s)"
+                  :disabled="!product.sizes || !product.sizes.includes(s)"
+                  :class="[
+                    'px-3 py-1 rounded text-xs border transition-colors',
+                    currentSize === s ? 'bg-charcoal text-cream' : 'bg-white text-charcoal',
+                    (!product.sizes || !product.sizes.includes(s)) ? 'opacity-40 cursor-not-allowed' : 'hover:bg-border'
+                  ]"
+                >{{ s }}</button>
+              </div>
+            </div>
+            <!-- Colours -->
+            <div v-if="product" class="mb-4">
+              <p class="text-[10px] tracking-[0.2em] uppercase text-muted mb-2">Colour</p>
+              <div class="flex gap-2 items-center">
+                <button
+                  v-for="c in product.availableColors ? product.availableColors : [product.color]"
+                  :key="c"
+                  @click="selectColor(c)"
+                  :class="[
+                    'w-7 h-7 rounded-full border-2 transition-all',
+                    currentColor === c ? 'border-charcoal scale-110' : 'border-transparent'
+                  ]"
+                  :style="{ background: (getColorHex(c) || '#fff') }"
+                ></button>
+              </div>
+            </div>
             <div class="flex items-end justify-between mb-4">
               <span class="font-display text-4xl text-charcoal">€{{ product.price }}</span>
               <span
@@ -53,8 +86,9 @@
               >{{ product.badge }}</span>
             </div>
             <button
-              @click="$emit('add-to-cart', product); $emit('close')"
-              class="w-full bg-charcoal text-cream font-body text-xs tracking-widest uppercase py-4 hover:bg-accent transition-colors duration-200 rounded"
+              @click="onAddToCart"
+              :disabled="(product.sizes && product.sizes.length > 0 && !currentSize)"
+              class="w-full bg-charcoal text-cream font-body text-xs tracking-widest uppercase py-4 hover:bg-accent transition-colors duration-200 rounded disabled:opacity-50 disabled:cursor-not-allowed"
             >Add to Bag</button>
           </div>
 
@@ -65,8 +99,64 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   product: { type: Object, default: null },
+  sizes:   { type: Array,  default: () => [] },
+  colors:  { type: Array,  default: () => [] },
+  selectedSize:  { type: String, default: '' },
+  selectedColor: { type: String, default: '' },
 })
-defineEmits(['close', 'add-to-cart'])
+const emit = defineEmits(['close', 'add-to-cart', 'update:selectedSize', 'update:selectedColor'])
+
+import { ref } from 'vue'
+// local fallbacks not used when parent provides v-models
+const localSize = ref('')
+const localColor = ref('')
+
+import { computed } from 'vue'
+
+const currentSize = computed(() => {
+  return (typeof props.selectedSize !== 'undefined' && props.selectedSize !== '') ? props.selectedSize : localSize.value
+})
+
+const currentColor = computed(() => {
+  return (typeof props.selectedColor !== 'undefined' && props.selectedColor !== '') ? props.selectedColor : localColor.value
+})
+
+function getPropSize() {
+  return typeof props.selectedSize !== 'undefined' ? props.selectedSize : localSize.value
+}
+
+function getPropColor() {
+  return typeof props.selectedColor !== 'undefined' ? props.selectedColor : localColor.value
+}
+
+function selectSize(s) {
+  if (!props.product || !props.product.sizes || !props.product.sizes.includes(s)) return
+  const next = currentSize.value === s ? '' : s
+  emit('update:selectedSize', next)
+  localSize.value = next
+}
+
+function selectColor(c) {
+  const allowed = props.product && (props.product.availableColors ? props.product.availableColors.includes(c) : props.product.color === c)
+  if (!allowed) return
+  const next = currentColor.value === c ? '' : c
+  emit('update:selectedColor', next)
+  localColor.value = next
+}
+
+function getColorHex(name) {
+  const list = props.colors || []
+  const found = list.find(x => x.name === name)
+  return found ? found.hex : null
+}
+
+function onAddToCart() {
+  const size = currentSize.value || null
+  const color = currentColor.value || (props.product && props.product.color ? props.product.color : null)
+  const options = { size, color }
+  emit('add-to-cart', { product: props.product, options })
+  emit('close')
+}
 </script>

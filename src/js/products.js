@@ -55,6 +55,9 @@ export const COLORS = [
   { name: 'Terracotta', hex: '#C47A5A' },
 ]
 
+// ── Standard size options ─────────────────────────────────
+export const SIZES = ['XS', 'S', 'M', 'L', 'XL']
+
 // ── Product catalogue ────────────────────────────────────────
 export const PRODUCTS = [
   {
@@ -64,10 +67,12 @@ export const PRODUCTS = [
     price: 580,
     image: cashmereCoat,
     bg: '#EEE8E0',
+    sizes: ['M','L','XL'],
     rating: 5,
     reviews: 42,
     badge: 'New',         // 'New' | 'Sale' | null
-    color: 'Camel',
+    color: ['Camel', 'ivory', 'Navy'],   // use single color name or array of names for multiple swatches
+    availableColors: ['Camel','Ivory', 'Navy'],
     description: 'A luxurious double-faced cashmere overcoat with a relaxed silhouette and refined lapels. Timeless and versatile.',
   },
   {
@@ -111,6 +116,7 @@ export const PRODUCTS = [
     badge: 'New',
     color: 'Ivory',
     description: 'Hand-finished calfskin derbies with a leather sole. Classic craftmanship for the modern wardrobe.',
+    sizes: ['40','41','42','43'],
   },
   {
     id: 5,
@@ -125,6 +131,7 @@ export const PRODUCTS = [
     badge: null,
     color: 'Sage',
     description: 'A generous merino wool scarf woven in a subtle herringbone pattern. Warmth without compromise.',
+    sizes: [],
   },
   {
     id: 6,
@@ -139,6 +146,7 @@ export const PRODUCTS = [
     badge: null,
     color: 'Ivory',
     description: 'Relaxed linen shirt with mother-of-pearl buttons. The essential summer top.',
+    sizes: ['S','M','L'],
   },
   {
     id: 7,
@@ -153,6 +161,7 @@ export const PRODUCTS = [
     badge: 'New',
     color: 'Terracotta',
     description: 'Hand-thrown ceramic vase with a matte glaze. Each piece is unique, bearing the mark of the maker.',
+    sizes: [],
   },
   {
     id: 8,
@@ -167,6 +176,7 @@ export const PRODUCTS = [
     badge: null,
     color: 'Navy',
     description: 'Fine merino wool turtleneck in a relaxed fit. The perfect layering piece for cooler months.',
+    sizes: ['S','M','L'],
   },
   {
     id: 9,
@@ -181,6 +191,7 @@ export const PRODUCTS = [
     badge: null,
     color: 'Camel',
     description: 'Buttery suede loafers with a stacked leather heel. A modern classic with old-world charm.',
+    sizes: ['40','41','42','43'],
   },
   {
     id: 10,
@@ -195,6 +206,7 @@ export const PRODUCTS = [
     badge: null,
     color: 'Sage',
     description: 'Lightweight linen trousers with an elasticated waistband and tapered leg. Effortless summer dressing.',
+    sizes: ['S','M','L'],
   },
   {
     id: 11,
@@ -209,6 +221,7 @@ export const PRODUCTS = [
     badge: null,
     color: 'Camel',
     description: 'Full-grain leather belt with a polished brass buckle. A quiet mark of quality.',
+    sizes: [],
   },
   {
     id: 12,
@@ -223,6 +236,23 @@ export const PRODUCTS = [
     badge: 'New',
     color: 'Dusty Rose',
     description: 'Stonewashed linen throw in a generous size. Drapes beautifully over a sofa or the end of a bed.',
+    sizes: [],
+  },
+
+  {
+    id: 13,
+    name: 'Linen Throw',
+    category: 'Home',
+    price: 175,
+    image: null,
+    emoji: '🛋️',
+    bg: '#EAE8F0',
+    rating: 5,
+    reviews: 9,
+    badge: 'New',
+    color: 'Dusty Rose',
+    description: 'Stonewashed linen throw in a generous size. Drapes beautifully over a sofa or the end of a bed.',
+    sizes: [],
   },
 
   // ── ADD NEW PRODUCTS BELOW ────────────────────────────────
