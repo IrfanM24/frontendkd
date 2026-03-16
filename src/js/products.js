@@ -28,8 +28,10 @@
  */
 
 // ── Import real product images here ─────────────────────────
-// import cashmereCoat  from '../assets/images/cashmere-coat.jpg'
-// import silkBlouse    from '../assets/images/silk-blouse.jpg'
+import cashmereCoat from '../assets/images/CashmereOvercoat_light-grey.jpg'
+
+import tailoredTrousers from '../assets/images/TailoredTrousers-black.jpg'
+
 
 // ── Categories shown in the sidebar filter ──────────────────
 export const CATEGORIES = [
@@ -60,8 +62,7 @@ export const PRODUCTS = [
     name: 'Cashmere Overcoat',
     category: 'Outerwear',
     price: 580,
-    image: null,          // replace with imported image, e.g. cashmereCoat
-    emoji: '🧥',          // fallback when image is null
+    image: cashmereCoat,
     bg: '#EEE8E0',
     rating: 5,
     reviews: 42,
@@ -88,8 +89,8 @@ export const PRODUCTS = [
     name: 'Tailored Trousers',
     category: 'Trousers',
     price: 285,
-    image: null,
-    emoji: '👖',
+    image: tailoredTrousers,
+    
     bg: '#E8E4DC',
     rating: 5,
     reviews: 61,

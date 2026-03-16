@@ -9,7 +9,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
           </svg>
         </button>
-        <h1 class="font-display text-2xl tracking-widest text-charcoal uppercase">Maison</h1>
+        <h1 class="font-display text-2xl tracking-widest text-charcoal uppercase">Clothing</h1>
         <span class="logo-line hidden sm:inline-block"></span>
         <span class="hidden sm:inline text-xs tracking-[0.2em] text-muted uppercase font-body">Collection 2025</span>
       </div>
