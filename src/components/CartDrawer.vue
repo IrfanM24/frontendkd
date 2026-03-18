@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   open:      { type: Boolean, required: true },
   cart:      { type: Array,   default: () => [] },
   cartCount: { type: Number,  default: 0 },
@@ -85,7 +85,7 @@ defineProps({
 defineEmits(['close', 'remove'])
 
 function getColorHex(name) {
-  const list = colors || []
+  const list = props.colors || []
   const found = list.find(x => x.name === name)
   return found ? found.hex : '#fff'
 }

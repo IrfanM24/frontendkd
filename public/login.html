@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login / Register</title>
+    <style>
+      body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f7f7f7;color:#111;margin:0}
+      .card{max-width:420px;margin:6vh auto;padding:24px;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+      h1{font-size:18px;margin:0 0 12px}
+      .row{margin-bottom:12px}
+      input{width:100%;padding:10px;border:1px solid #e3e3e3;border-radius:6px}
+      button{width:100%;padding:10px;border-radius:6px;border:0;background:#111;color:#fff}
+      .muted{font-size:13px;color:#666;margin-top:10px;text-align:center}
+      a{color:#111}
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Login / Register</h1>
+      <form onsubmit="event.preventDefault(); alert('This demo page does not perform real authentication.');">
+        <div class="row">
+          <input type="email" placeholder="Email" required />
+        </div>
+        <div class="row">
+          <input type="password" placeholder="Password" required />
+        </div>
+        <div class="row">
+          <button type="submit">Login</button>
+        </div>
+      </form>
+      <div class="muted">Don't have an account? <a href="register.html" Register</a></div>
+      <div class="muted"><a href="/">Back to store</a></div>
+    </div>
+  </body>
+</html>
