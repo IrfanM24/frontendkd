@@ -39,13 +39,12 @@
           />
         </div>
 
-        <!-- Login / Register (replaces wishlist) -->
-        <a href="/login.html" class="hover:text-accent transition-colors flex items-center gap-2">
+        <!-- Wishlist -->
+        <button class="hover:text-accent transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
             
           </svg>
-          <span class="text-xs font-body hidden sm:inline">Login / Register</span>
-        </a>
+        </button>
 
         <!-- Cart -->
         <button @click="$emit('toggle-cart')" class="relative hover:text-accent transition-colors">
