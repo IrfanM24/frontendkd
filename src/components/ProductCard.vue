@@ -1,13 +1,13 @@
 <template>
-  <div
-    :class="['product-card bg-white rounded-lg overflow-hidden cursor-pointer',
-             viewMode === 'list' ? 'flex gap-4 items-center p-4' : '']"
+  <article
+    :class="['product-card group cursor-pointer', viewMode === 'list' ? 'flex gap-6 items-center p-4' : '']"
     @click="$emit('open', product)"
   >
-    <!-- Image / emoji -->
     <div
-      :class="['overflow-hidden flex items-center justify-center relative',
-               viewMode === 'grid' ? 'h-52' : 'w-28 h-28 rounded-lg flex-shrink-0']"
+      :class="[
+        'overflow-hidden flex items-center justify-center relative bg-white/40',
+        viewMode === 'grid' ? 'h-64' : 'w-32 h-32 rounded-2xl flex-shrink-0'
+      ]"
       :style="{ background: product.bg }"
     >
       <img
@@ -19,51 +19,77 @@
       <span
         v-else
         class="product-img select-none"
-        :class="viewMode === 'list' ? 'text-3xl' : 'text-5xl'"
+        :class="viewMode === 'list' ? 'text-3xl' : 'text-6xl'"
       >{{ product.emoji }}</span>
 
       <span
         v-if="product.badge"
-        class="absolute top-2 left-2 text-[10px] tracking-widest uppercase font-body px-2 py-0.5 rounded-full"
-        :class="product.badge === 'New' ? 'bg-charcoal text-cream' : 'bg-accent text-cream'"
+        class="absolute top-3 left-3 text-[10px] tracking-[0.35em] uppercase font-body px-3 py-1 rounded-full bg-black/70 text-white"
       >{{ product.badge }}</span>
     </div>
 
-    <!-- Card body -->
-    <div :class="viewMode === 'grid' ? 'p-4' : 'flex-1 min-w-0'">
-      <p class="text-[10px] tracking-[0.15em] uppercase text-muted font-body mb-0.5">{{ product.category }}</p>
-      <h3 class="font-display text-base text-charcoal leading-tight mb-1 truncate">{{ product.name }}</h3>
-      <p v-if="viewMode === 'list'" class="text-xs text-muted font-body mb-2 line-clamp-2">{{ product.description }}</p>
+    <div :class="viewMode === 'grid' ? 'p-5 space-y-3' : 'flex-1 min-w-0 space-y-2'">
+      <div>
+        <p class="text-[10px] tracking-[0.35em] uppercase text-muted font-body mb-1">{{ product.category }}</p>
+        <h3 class="font-display text-xl text-charcoal leading-tight">{{ product.name }}</h3>
+        <p v-if="viewMode === 'list'" class="text-xs text-muted font-body line-clamp-2 mt-1">{{ product.description }}</p>
+      </div>
 
-      <!-- Stars -->
-      <div class="flex items-center gap-1 mb-2">
+      <div class="flex flex-wrap gap-2 text-[9px] uppercase tracking-[0.35em] text-muted">
+        <span class="px-3 py-0.5 rounded-full border border-border bg-white/80 text-charcoal">{{ product.gender }}</span>
         <span
-          v-for="i in 5" :key="i"
-          class="text-[10px]"
+          v-for="tag in displayTags.slice(0, 2)"
+          :key="tag"
+          class="px-3 py-0.5 rounded-full border border-border bg-white/60"
+        >{{ tag }}</span>
+      </div>
+
+      <div class="flex items-center gap-1 text-[11px] text-muted">
+        <span
+          v-for="i in 5"
+          :key="i"
           :class="i <= product.rating ? 'text-accent' : 'text-border'"
         >★</span>
-        <span class="text-[10px] text-muted font-body">({{ product.reviews }})</span>
+        <span>({{ product.reviews }})</span>
       </div>
 
-      <div class="flex items-center justify-between gap-2">
-        <span class="font-display text-lg text-charcoal">€{{ product.price }}</span>
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <span class="font-display text-2xl">€{{ product.price }}</span>
+          <p class="text-[11px] uppercase tracking-[0.3em] text-muted">Incl. duties</p>
+        </div>
         <button
+          type="button"
           @click.stop="$emit('add-to-cart', product)"
-          :class="['btn-cart text-[10px] tracking-widest uppercase font-body border px-3 py-1.5 rounded transition-colors',
-                   inCart
-                     ? 'bg-accent text-cream border-accent'
-                     : 'border-charcoal text-charcoal bg-transparent']"
-        >{{ inCart ? '✓ Added' : 'Add' }}</button>
+          :class="['btn-cart text-[10px] tracking-[0.35em] uppercase font-body px-4 py-2',
+                   inCart ? 'bg-charcoal text-cream' : 'bg-transparent text-charcoal']"
+        >{{ inCart ? 'Added' : 'Add to bag' }}</button>
       </div>
     </div>
-  </div>
+  </article>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   product:  { type: Object,  required: true },
   viewMode: { type: String,  default: 'grid' },
   inCart:   { type: Boolean, default: false },
 })
+
+const displayTags = computed(() => {
+  const genderTag = String(props.product?.gender || '').trim().toLowerCase()
+  const unique = new Set()
+
+  for (const rawTag of props.product?.tags || []) {
+    const normalized = String(rawTag || '').trim().toLowerCase()
+    if (!normalized || normalized === genderTag || unique.has(normalized)) continue
+    unique.add(normalized)
+  }
+
+  return Array.from(unique)
+})
+
 defineEmits(['open', 'add-to-cart'])
 </script>

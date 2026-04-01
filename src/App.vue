@@ -1,15 +1,15 @@
 <template>
-  <div>
-    <!-- Header -->
+  <div class="bg-cream min-h-screen text-charcoal">
     <AppHeader
       :cart-count="cartCount"
       :search-query="searchQuery"
+      :selected-gender="selectedGender"
       @toggle-sidebar="sidebarOpen = !sidebarOpen"
-      @toggle-cart="cartOpen = !cartOpen"
+      @toggle-cart="openCart"
       @update:searchQuery="searchQuery = $event"
+      @select-gender="toggleGenderFilter"
     />
 
-    <!-- Cart -->
     <CartDrawer
       :open="cartOpen"
       :cart="cart"
@@ -20,99 +20,139 @@
       @remove="removeFromCart"
     />
 
-    <!-- layout -->
-    <div class="max-w-screen-xl mx-auto px-6 py-8 flex gap-8">
+    <div class="page-shell">
+      <!-- Hero -->
+      <section class="hero-wrap">
+        <div class="hero-panel">
+          <p class="text-[11px] uppercase tracking-[0.4em] text-white/70 mb-3">Spring 2025 capsule</p>
+          <h2>Quiet Luxury Edit</h2>
+          <p>Precision tailoring, architectural silhouettes, and tactile fabrics curated to echo the restraint of contemporary shops.</p>
+          <div class="cta-group">
+            <button type="button" class="cta-primary" @click="scrollToProducts">Shop editorial</button>
+            <button type="button" class="cta-secondary" @click="scrollToEditorial">View campaign</button>
+          </div>
+        </div>
 
-      <!-- Sidebar -->
-      <FilterSidebar
-        :open="sidebarOpen"
-        :categories="CATEGORIES"
-        :colors="COLORS"
-        :sort-options="sortOptions"
-        v-model:selectedCategory="selectedCategory"
-        v-model:maxPrice="maxPrice"
-        v-model:sortBy="sortBy"
-        :sizes="SIZES"
-        v-model:selectedSize="selectedSize"
-        :available-sizes="availableSizes"
-        :selected-colors="selectedColors"
-        @toggle-color="toggleColor"
-        @clear="clearFilters"
-      />
+        <div class="metrics-card">
+          <p class="text-[11px] uppercase tracking-[0.45em] text-muted">Inside the shop</p>
+          <div class="metrics-grid">
+            <div class="metric">
+              <h3>48</h3>
+              <span>pieces</span>
+            </div>
+            <div class="metric">
+              <h3>12</h3>
+              <span>new arrivals</span>
+            </div>
+            <div class="metric">
+              <h3>05</h3>
+              <span>atelier drops</span>
+            </div>
+          </div>
+          <p class="text-sm text-muted mt-6">A concise wardrobe system informed by neutral chromatics and long-form craftsmanship.</p>
+        </div>
+      </section>
 
-      <!-- Main area -->
-      <main class="flex-1 min-w-0">
+      <!-- Editorial picks -->
+      <section id="editorial-section" class="editorial-grid">
+        <article class="editorial-card">
+          <span>Tailoring</span>
+          <strong>Studio suiting</strong>
+          <a href="#">Discover</a>
+        </article>
+        <article class="editorial-card">
+          <span>Collections</span>
+          <strong>Shop atelier</strong>
+          <a href="#">Curate</a>
+        </article>
+        <article class="editorial-card">
+          <span>Essentials</span>
+          <strong>Wardrobe forms</strong>
+          <a href="#">Explore</a>
+        </article>
+      </section>
 
-        <!-- Toolbar -->
-        <div class="flex items-center justify-between mb-6">
+      <!-- Product + filters -->
+      <section id="product-section" class="mt-16">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 class="font-display text-2xl text-charcoal tracking-wide">
-              {{ selectedCategory === 'All' ? 'All Products' : selectedCategory }}
-            </h2>
-            <p class="text-xs text-muted font-body mt-0.5">{{ filteredProducts.length }} items</p>
+            <p class="text-[11px] uppercase tracking-[0.4em] text-muted">Curated selection</p>
+            <div class="flex flex-wrap items-baseline gap-4">
+              <h2 class="font-display text-3xl tracking-[0.3em] uppercase">
+                {{ selectedCategory === 'All' ? 'Seasonal Edit' : selectedCategory }}
+              </h2>
+              <span class="text-xs text-muted tracking-[0.3em] uppercase">{{ filteredProducts.length }} pieces</span>
+            </div>
+            <p class="text-sm text-muted mt-2 max-w-2xl">
+              Precision filters for colour, form, and proportion streamline your search across the collection.
+            </p>
           </div>
 
-          <!-- Grid / List toggle -->
-          <div class="flex gap-1 border border-border rounded p-1 bg-white">
+          <div class="floating-toolbar flex items-center gap-2 text-[10px] uppercase tracking-[0.4em]">
+            <span class="text-muted hidden md:inline">View</span>
             <button
+              type="button"
               @click="viewMode = 'grid'"
-              :class="['p-1.5 rounded transition-colors',
-                       viewMode === 'grid' ? 'bg-charcoal text-cream' : 'text-muted hover:text-charcoal']"
-            >
-              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
-                <rect x="1" y="1" width="6" height="6"/>
-                <rect x="9" y="1" width="6" height="6"/>
-                <rect x="1" y="9" width="6" height="6"/>
-                <rect x="9" y="9" width="6" height="6"/>
-              </svg>
-            </button>
+              :class="['px-3 py-1.5 rounded-full transition-colors', viewMode === 'grid' ? 'bg-charcoal text-cream' : 'text-muted']"
+            >Grid</button>
             <button
+              type="button"
               @click="viewMode = 'list'"
-              :class="['p-1.5 rounded transition-colors',
-                       viewMode === 'list' ? 'bg-charcoal text-cream' : 'text-muted hover:text-charcoal']"
-            >
-              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
-                <rect x="1" y="2"    width="14" height="2.5"/>
-                <rect x="1" y="6.75" width="14" height="2.5"/>
-                <rect x="1" y="11.5" width="14" height="2.5"/>
-              </svg>
-            </button>
+              :class="['px-3 py-1.5 rounded-full transition-colors', viewMode === 'list' ? 'bg-charcoal text-cream' : 'text-muted']"
+            >List</button>
           </div>
         </div>
 
-        <!-- Product grid -->
-        <div
-          v-if="filteredProducts.length > 0"
-          :class="viewMode === 'grid'
-            ? 'grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5'
-            : 'space-y-4'"
-        >
-          <ProductCard
-            v-for="product in filteredProducts"
-            :key="product.id"
-            :product="product"
-            :view-mode="viewMode"
-            :in-cart="!!cart.find(i => i.id === product.id)"
-            @open="openProduct"
-            @add-to-cart="addToCart"
+        <div class="grid gap-6 lg:grid-cols-[280px_1fr] mt-10 items-start">
+          <FilterSidebar
+            :open="sidebarOpen"
+            :categories="CATEGORIES"
+            :colors="COLORS"
+            :sort-options="sortOptions"
+            v-model:selectedCategory="selectedCategory"
+            v-model:maxPrice="maxPrice"
+            v-model:sortBy="sortBy"
+            :sizes="SIZES"
+            v-model:selectedSize="selectedSize"
+            :available-sizes="availableSizes"
+            :selected-colors="selectedColors"
+            @toggle-color="toggleColor"
+            @clear="clearFilters"
           />
-        </div>
 
-        <!-- Empty state -->
-        <div v-else class="text-center py-24 text-muted">
-          <svg class="w-12 h-12 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
-          </svg>
-          <p class="font-display text-xl mb-1">No products found</p>
-          <p class="text-sm font-body">Try adjusting your filters</p>
-          <button @click="clearFilters" class="mt-4 text-xs tracking-widest uppercase underline underline-offset-4 hover:text-charcoal transition-colors">
-            Clear filters
-          </button>
+          <main class="flex-1 min-w-0">
+            <div
+              v-if="filteredProducts.length > 0"
+              :class="viewMode === 'grid'
+                ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6'
+                : 'space-y-5'"
+            >
+              <ProductCard
+                v-for="product in filteredProducts"
+                :key="product.id"
+                :product="product"
+                :view-mode="viewMode"
+                :in-cart="!!cart.find(i => i.id === product.id)"
+                @open="openProduct"
+                @add-to-cart="addToCart"
+              />
+            </div>
+
+            <div v-else class="text-center py-24 text-muted">
+              <svg class="w-12 h-12 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              <p class="font-display text-xl mb-1">No products found</p>
+              <p class="text-sm font-body">Try adjusting your filters</p>
+              <button @click="clearFilters" class="mt-4 text-xs tracking-widest uppercase underline underline-offset-4 hover:text-charcoal transition-colors">
+                Clear filters
+              </button>
+            </div>
+          </main>
         </div>
-      </main>
+      </section>
     </div>
 
-    <!-- Product modal -->
     <ProductModal
       :product="selectedProduct"
       :sizes="SIZES"
@@ -123,14 +163,22 @@
       @add-to-cart="addToCart"
     />
 
-    <!-- Toast -->
-    <div v-if="toast" class="fixed top-6 right-6 z-50">
-      <div class="bg-charcoal text-cream px-4 py-3 rounded shadow-lg max-w-sm">
-        <div class="text-sm">{{ toast }}</div>
+    <div v-if="toast" class="pointer-events-none fixed top-24 right-6 z-50">
+      <div class="glass-panel max-w-sm p-3 rounded-2xl border border-border/70 bg-white/90 shadow-2xl">
+        <div class="flex items-center gap-3">
+          <div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0" :style="{ background: toast.bg || '#f4f1eb' }">
+            <img v-if="toast.image" :src="toast.image" :alt="toast.name" class="w-full h-full object-cover" />
+            <div v-else class="w-full h-full flex items-center justify-center text-2xl">{{ toast.emoji || '🛍️' }}</div>
+          </div>
+          <div class="min-w-0">
+            <p class="text-[10px] tracking-[0.3em] uppercase text-muted font-body">Added to bag</p>
+            <p class="font-display text-base text-charcoal truncate">{{ toast.name }}</p>
+            <p class="text-xs text-muted font-body truncate">{{ toast.meta }}</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Footer -->
     <footer class="border-t border-border mt-16 py-10">
       <div class="max-w-screen-xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs tracking-widest uppercase text-muted font-body">
         <span class="font-display text-lg text-charcoal tracking-widest">Clothing</span>
@@ -140,7 +188,7 @@
           <a href="#" class="hover:text-charcoal transition-colors">Returns</a>
           <a href="#" class="hover:text-charcoal transition-colors">Contact</a>
         </div>
-        <span>© 2025 footer</span>
+        <span>© 2025 Shop</span>
       </div>
     </footer>
   </div>
@@ -170,6 +218,7 @@ const maxPrice         = ref(1000)
 const sortBy           = ref('featured')
 const selectedColors   = ref([])
 const selectedSize     = ref('')
+const selectedGender   = ref('')
 
 // ── Cart state ────────────────────────────────────────────
 const cart = ref([])
@@ -208,6 +257,10 @@ const filteredProducts = computed(() => {
 
   if (selectedSize.value) {
     list = list.filter(p => Array.isArray(p.sizes) && p.sizes.includes(selectedSize.value))
+  }
+
+  if (selectedGender.value) {
+    list = list.filter(p => p.gender === selectedGender.value)
   }
 
   if (sortBy.value === 'price-asc')  list.sort((a, b) => a.price - b.price)
@@ -250,9 +303,22 @@ function addToCart(productOrPayload, maybePayload) {
 
   const item = { ...product, options }
   cart.value.push(item)
-  // show toast with full description
-  const desc = `${product.name}${options.size ? ' • Size: '+options.size : ''}${options.color ? ' • Color: '+options.color : ''} — ${product.description}`
-  toast.value = desc
+
+  const meta = [
+    options.size ? `Size: ${options.size}` : '',
+    options.color ? `Color: ${options.color}` : '',
+  ].filter(Boolean).join(' • ') || product.category
+
+  toast.value = {
+    name: product.name,
+    image: product.image || null,
+    emoji: product.emoji || null,
+    bg: product.bg || '#f4f1eb',
+    meta,
+  }
+
+  // Open cart immediately after add so users can confirm chosen options.
+  cartOpen.value = true
   setTimeout(() => { toast.value = null }, 4500)
 }
 
@@ -274,6 +340,11 @@ function clearFilters() {
   selectedColors.value   = []
   searchQuery.value      = ''
   selectedSize.value     = ''
+  selectedGender.value   = ''
+}
+
+function toggleGenderFilter(gender) {
+  selectedGender.value = selectedGender.value === gender ? '' : gender
 }
 
 function openProduct(product) {
@@ -287,5 +358,19 @@ function closeModal() {
   selectedProduct.value = null
   modalSelectedSize.value = ''
   modalSelectedColor.value = ''
+}
+
+function openCart() {
+  cartOpen.value = true
+}
+
+function scrollToProducts() {
+  const el = document.getElementById('product-section')
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function scrollToEditorial() {
+  const el = document.getElementById('editorial-section')
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 </script>

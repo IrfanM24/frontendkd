@@ -6,6 +6,10 @@
     <title>Login / Register</title>
     <style>
       body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f7f7f7;color:#111;margin:0}
+      .topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #e8e3d8;background:#fff}
+      .brand{letter-spacing:.25em;text-transform:uppercase;font-size:12px}
+      .links{display:flex;gap:10px}
+      .pill{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border:1px solid #d8d3c8;border-radius:999px;background:#fff;color:#111;text-decoration:none;font-size:11px;text-transform:uppercase;letter-spacing:.14em}
       .card{max-width:420px;margin:6vh auto;padding:24px;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
       h1{font-size:18px;margin:0 0 12px}
       .row{margin-bottom:12px}
@@ -16,6 +20,14 @@
     </style>
   </head>
   <body>
+    <header class="topbar">
+      <a class="brand" href="/">Shop</a>
+      <nav class="links">
+        <a class="pill" href="/login.html">Login</a>
+        <a class="pill" href="/js/register.html">Register</a>
+      </nav>
+    </header>
+
     <div class="card">
       <h1>Login / Register</h1>
       <form onsubmit="event.preventDefault(); alert('This demo page does not perform real authentication.');">
@@ -29,7 +41,7 @@
           <button type="submit">Login</button>
         </div>
       </form>
-      <div class="muted">Don't have an account? <a href="register.html" Register</a></div>
+      <div class="muted">Don't have an account? <a href="/js/register.html">Register</a></div>
       <div class="muted"><a href="/">Back to store</a></div>
     </div>
   </body>

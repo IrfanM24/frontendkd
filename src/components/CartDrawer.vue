@@ -6,14 +6,14 @@
       <div @click="$emit('close')" class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
 
       <!-- Drawer -->
-      <div class="relative w-80 bg-cream h-full flex flex-col shadow-2xl slide-down">
+      <div class="relative w-80 glass-panel bg-white h-full flex flex-col slide-down">
 
         <!-- Header -->
-        <div class="p-6 border-b border-border flex items-center justify-between">
-          <h2 class="font-display text-xl tracking-wide text-charcoal">
-            Your Bag
-            <span class="text-muted text-sm font-body font-light">({{ cartCount }})</span>
-          </h2>
+        <div class="p-6 border-b border-border/70 flex items-center justify-between">
+          <div>
+            <p class="text-[10px] tracking-[0.35em] uppercase text-muted">Cart</p>
+            <h2 class="font-display text-2xl tracking-wide text-charcoal">Your bag <span class="text-[12px] font-body text-muted">({{ cartCount }})</span></h2>
+          </div>
           <button @click="$emit('close')" class="text-muted hover:text-charcoal">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -59,13 +59,14 @@
         </div>
 
         <!-- Checkout footer -->
-        <div v-if="cart.length > 0" class="p-6 border-t border-border space-y-3">
+        <div v-if="cart.length > 0" class="p-6 border-t border-border/70 space-y-4">
           <div class="flex justify-between font-body text-sm">
             <span class="text-muted">Subtotal</span>
             <span class="text-charcoal font-medium">€{{ cartTotal }}</span>
           </div>
-          <button class="w-full bg-charcoal text-cream font-body text-xs tracking-widest uppercase py-3.5 hover:bg-accent transition-colors duration-200">
-            Checkout
+          <p class="text-[11px] uppercase tracking-[0.3em] text-muted">Taxes calculated at checkout</p>
+          <button class="w-full bg-charcoal text-cream font-body text-[11px] tracking-[0.35em] uppercase py-3.5 hover:bg-accent transition-colors duration-200 rounded-full">
+            Checkout securely
           </button>
         </div>
 
@@ -75,7 +76,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   open:      { type: Boolean, required: true },
   cart:      { type: Array,   default: () => [] },
   cartCount: { type: Number,  default: 0 },
@@ -85,7 +86,7 @@ defineProps({
 defineEmits(['close', 'remove'])
 
 function getColorHex(name) {
-  const list = colors || []
+  const list = props.colors || []
   const found = list.find(x => x.name === name)
   return found ? found.hex : '#fff'
 }
